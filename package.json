@@ -3,10 +3,13 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --port 8080",
     "build": "ng build",
     "test": "ng test",
-    "lint": "ng lint",
+    "lint": "tslint ./src/tslint.json ./src/**/*.ts -t verbose --fix",
+    "lint-staged": "lint-staged",
+    "prettier": "npx prettier --write \"src/{app,environments,assets}/**/*{.ts,.js,.json,.html}\"",
+    "codestyle": "npm run prettier && tslint -p tsconfig.json && stylelint --syntax=scss",
     "e2e": "ng e2e"
   },
   "private": true,
@@ -19,6 +22,9 @@
     "@angular/platform-browser": "~8.2.9",
     "@angular/platform-browser-dynamic": "~8.2.9",
     "@angular/router": "~8.2.9",
+    "classlist.js": "1.1.20150312",
+    "core-js": "3.6.5",
+    "normalize.css": "8.0.1",
     "rxjs": "~6.4.0",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1"
@@ -28,10 +34,12 @@
     "@angular/cli": "~8.3.8",
     "@angular/compiler-cli": "~8.2.9",
     "@angular/language-service": "~8.2.9",
-    "@types/node": "~8.9.4",
     "@types/jasmine": "~3.3.8",
     "@types/jasminewd2": "~2.0.3",
+    "@types/node": "~8.9.4",
+    "angular-tslint-rules": "1.20.4",
     "codelyzer": "^5.0.0",
+    "husky": "4.2.5",
     "jasmine-core": "~3.4.0",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~4.1.0",
@@ -39,9 +47,36 @@
     "karma-coverage-istanbul-reporter": "~2.0.1",
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.4.0",
+    "lint-staged": "10.2.7",
+    "prettier": "2.0.5",
+    "prettier-tslint": "0.4.2",
+    "pretty-quick": "2.0.1",
     "protractor": "~5.4.0",
+    "stylelint": "13.5.0",
+    "stylelint-order": "4.0.0",
     "ts-node": "~7.0.0",
     "tslint": "~5.15.0",
+    "tslint-config-prettier": "1.18.0",
+    "tslint-plugin-prettier": "2.3.0",
     "typescript": "~3.5.3"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "tslint ./src/tslint.json -t verbose",
+      "git add"
+    ],
+    "*.scss": [
+      "stylelint --syntax=scss --fix",
+      "git add"
+    ],
+    "*.html": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   }
 }
