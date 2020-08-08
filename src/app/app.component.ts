@@ -13,9 +13,11 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.websocketService.on('USER').subscribe((evt) => {
-      console.log(evt);
-
       this.connectStatus = 'Подключено';
+    });
+
+    this.websocketService.onDisconnect().subscribe(() => {
+      this.connectStatus = 'Не подключено';
     });
   }
 }

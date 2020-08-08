@@ -18,6 +18,7 @@ export class WebsocketService implements IWebsocketService, OnDestroy {
   private websocket$: WebSocketSubject<IWsMessage<any>>;
   private connection$: Observer<boolean>;
   private wsMessages$: Subject<IWsMessage<any>>;
+  private wsDisconnect$: Subject<void>;
 
   private reconnectInterval: number;
   private reconnectAttempts: number;
@@ -27,6 +28,7 @@ export class WebsocketService implements IWebsocketService, OnDestroy {
 
   constructor(@Inject(config) private wsConfig: WebSocketConfig) {
     this.wsMessages$ = new Subject<IWsMessage<any>>();
+    this.wsDisconnect$ = new Subject();
 
     this.reconnectInterval = wsConfig.reconnectInterval || 5000; // pause between connections
     this.reconnectAttempts = wsConfig.reconnectAttempts || 10; // number of connection attempts
@@ -58,6 +60,10 @@ export class WebsocketService implements IWebsocketService, OnDestroy {
 
       if (!this.reconnection$ && typeof isConnected === 'boolean' && !isConnected) {
         this.reconnect();
+      }
+
+      if (!isConnected) {
+        this.wsDisconnect$.next();
       }
     });
 
@@ -102,13 +108,13 @@ export class WebsocketService implements IWebsocketService, OnDestroy {
         if (!this.websocket$) {
           this.wsMessages$.complete();
           this.connection$.complete();
+          this.wsDisconnect$.complete();
         }
       }
     );
   }
 
   public on<T>(event: string): Observable<T> {
-    console.log(event);
     if (event) {
       return this.wsMessages$.pipe(
         filter((message: IWsMessage<T>) => message.event === event),
@@ -123,5 +129,9 @@ export class WebsocketService implements IWebsocketService, OnDestroy {
     } else {
       console.error('Send error!');
     }
+  }
+
+  public onDisconnect(): Observable<void> {
+    return this.wsDisconnect$;
   }
 }
