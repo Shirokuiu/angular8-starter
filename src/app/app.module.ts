@@ -13,9 +13,9 @@ import { WebsocketModule } from './modules/websocket/websocket.module';
     AppRoutingModule,
     CoreModule,
     SharedModule,
-    WebsocketModule.config({
-      url: 'ws://localhost:3000',
-    }),
+    // WebsocketModule.config({
+    //   url: 'ws://localhost:3000',
+    // })
   ],
   declarations: [AppComponent],
   bootstrap: [AppComponent],

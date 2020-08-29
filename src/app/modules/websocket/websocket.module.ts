@@ -11,7 +11,7 @@ import { WebSocketConfig } from './websocket.model';
   providers: [WebsocketService],
 })
 export class WebsocketModule {
-  public static config(wsConfig: WebSocketConfig): ModuleWithProviders {
+  public static config(wsConfig: WebSocketConfig): ModuleWithProviders<WebsocketModule> {
     return {
       ngModule: WebsocketModule,
       providers: [{ provide: config, useValue: wsConfig }],
